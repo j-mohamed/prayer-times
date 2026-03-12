@@ -4,7 +4,7 @@ This is a SIMPL# Module that will allow you to display prayer times based on you
 
 #HELP_BEGIN
 
-GETPRAYERTIMES SIMPL+ MODULE — HELP FILE
+PRAYER TIMES SIMPL+ MODULE — HELP FILE
 
 PURPOSE
 This module calculates Islamic prayer times, Hijri date (Umm al‑Qura), Jumah Mubarak message,
