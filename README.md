@@ -31,19 +31,25 @@ TimezoneOffset
 DST_Mode (Analog Input)
 0 = Disabled
     DST is ignored. TimezoneOffset is used exactly as provided.
+    
 1 = Auto
     Module automatically applies DST based on DST_Region.
+    
 2 = Force On
     DST is always applied (TimezoneOffset + 1 hour).
+    
 3 = Force Off
     DST is never applied.
 
 DST_Region (Analog Input)
+
 Selects the DST ruleset used when DST_Mode = Auto.
+
 0 = North America (Canada / USA)
 1 = Europe (EU / UK legacy rules)
 2 = Middle East (Gulf regions with partial DST history)
 3 = Custom (reserved for future expansion)
+
 Notes:
 • When DST_Mode = Auto, the module checks the current date against the region’s DST rules.
 • When DST_Mode = Force On or Force Off, DST_Region is ignored.
