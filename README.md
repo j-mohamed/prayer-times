@@ -67,11 +67,14 @@ Asr_Method
 • 2 = Hanafi
 
 High_Latitude (Analog Input)
+
 Selects the high‑latitude adjustment rule for Fajr and Isha.
+
 0 = None
 1 = Middle of the Night
 2 = One‑Seventh of the Night
 3 = Angle-Based (Angle/60)
+
 Notes:
 • Only affects Fajr and Isha.
 • Only applies when twilight angles cannot be reached.
@@ -113,10 +116,12 @@ CURRENT PRAYER LOGIC
 CurrentPrayer$
 • Example: "Asr", "Maghrib", "Isha", "Tahajjud"
 
-NextPrayerCountdown$
+NextPrayerCountdown
+
 • Example: "Fajr in 08:44:42"
 
 HIJRI DATE (UMM AL-QURA)
+
 Hijri_Date$
 Hijri_Month$
 Hijri_Day$
@@ -124,26 +129,119 @@ Hijri_Year$
 • Example: "28 Rajab 1447"
 
 RAMADAN STATUS
-Ramadan_Status$
+
+Ramadan_Info
 • "X days until Ramadan"
-• "Ramadan has begun"
+
 • "Ramadan Day X"
 
 JUMAH MUBARAK
-Jumah_Mubarak$
+Jumah_Mubarak
 • "Jumah Mubarak" every Friday before Maghrib
 
-LICENSING OUTPUTS
-License_Status$
-• "Licensed" or "Demo Mode"
-
-Processor_ID$
-• Processor ID as a string (gated in demo mode)
+Processor_ID
+• Processor ID as a string (required for full license)
 
 -----------------------------------------------------------------------
 CUSTOM PRAYER COLORS
 -----------------------------------------------------------------------
-The module supports custom color gradients for each prayer using /USER/colors.ini.
-(Full documentation unchanged for clarity.)
 
-#HELP_END
+
+OVERVIEW
+The PrayerTimes module supports custom color gradients for each prayer.
+Each prayer uses two RGB colors:
+  - Start Color: used at the beginning of the prayer window
+  - End Color: used at the end of the prayer window
+
+The module automatically interpolates between these two colors to produce
+a smooth gradient effect throughout the prayer window.
+
+By default, the module uses built-in colors. These defaults may be
+overridden by creating a colors.ini file on the processor.
+
+-----------------------------------------------------------------------
+
+COLOR FILE LOCATION
+The module looks for the following file at startup:
+
+    /USER/colors.ini
+
+If the file exists, the module loads the custom colors and overrides the
+default palette. If the file does not exist, the module uses the built-in
+colors.
+
+-----------------------------------------------------------------------
+
+FILE FORMAT
+The file uses a simple INI-style format. Each prayer has its own section.
+
+Example:
+
+    [Fajr]
+    Start=0,180,255
+    End=0,60,120
+
+    [Dhuhr]
+    Start=255,220,0
+    End=255,140,0
+
+    [Asr]
+    Start=255,165,0
+    End=180,65,0
+
+    [Maghrib]
+    Start=255,80,60
+    End=120,20,20
+
+    [Isha]
+    Start=140,90,255
+    End=60,30,120
+
+-----------------------------------------------------------------------
+
+RGB VALUE FORMAT
+Each color is defined using three comma-separated values:
+
+    R,G,B
+
+Where:
+  - R = Red   (0–255)
+  - G = Green (0–255)
+  - B = Blue  (0–255)
+
+Spaces are optional. Example:
+
+    Start=255,140,0
+
+-----------------------------------------------------------------------
+
+HOW COLORS ARE APPLIED
+1. The module loads default colors during initialization.
+2. If colors.ini exists, the module overrides the defaults with values
+   found in the file.
+3. During runtime, the module calculates a gradient between the Start and
+   End colors based on the current prayer window.
+4. The resulting RGB values are output to SIMPL Windows as 16-bit analog
+   values (0–65535).
+
+-----------------------------------------------------------------------
+
+ERROR HANDLING
+- If the file is missing, default colors are used.
+- If a section or key is missing, defaults for that prayer are used.
+- If an RGB value is invalid, that entry is ignored and defaults remain.
+- Errors are printed to the console for debugging.
+
+-----------------------------------------------------------------------
+
+NOTES
+- The colors.ini file is optional.
+- Only values present in the file are overridden.
+- The format is intentionally simple for easy editing.
+
+
+LICENSING
+
+Module will operate in DEMO mode (No time limit). You will get the prayer times for today except for sunrise. If you want to unlock full functionality please email jameelm@gmail.com and send your processor ID and we will generate a license key.
+
+
