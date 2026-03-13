@@ -96,24 +96,24 @@ OUTPUTS
 -----------------------------------------------------------------------
 
 TODAY’S PRAYER TIMES (Serial)
-Fajr$
-Sunrise$
-Dhuhr$
-Asr$
-Maghrib$
-Isha$
+Fajr
+Sunrise
+Dhuhr
+Asr
+Maghrib
+Isha
 • All formatted as HH:MM
 
 TOMORROW’S PRAYER TIMES (Serial)
-Tomorrow_Fajr$
-Tomorrow_Sunrise$
-Tomorrow_Dhuhr$
-Tomorrow_Asr$
-Tomorrow_Maghrib$
-Tomorrow_Isha$
+Tomorrow_Fajr
+Tomorrow_Sunrise
+Tomorrow_Dhuhr
+Tomorrow_Asr
+Tomorrow_Maghrib
+Tomorrow_Isha
 
 CURRENT PRAYER LOGIC
-CurrentPrayer$
+CurrentPrayer
 • Example: "Asr", "Maghrib", "Isha", "Tahajjud"
 
 NextPrayerCountdown
@@ -122,10 +122,10 @@ NextPrayerCountdown
 
 HIJRI DATE (UMM AL-QURA)
 
-Hijri_Date$
-Hijri_Month$
-Hijri_Day$
-Hijri_Year$
+Hijri_Date
+Hijri_Month
+Hijri_Day
+Hijri_Year
 • Example: "28 Rajab 1447"
 
 RAMADAN STATUS
