@@ -1,0 +1,651 @@
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+
+#USER_SIMPLSHARP_LIBRARY "GetPrayerTimes"
+
+/*
+Dealer Name:
+System Name:
+System Number:
+Programmer: Jameel Mohamed
+*/
+
+
+#HELP_BEGIN
+
+PRAYER TIMES SIMPL+ MODULE — HELP FILE
+
+Module Created by: Jameel Mohamed
+Email: jameelm@gmail.com
+
+PURPOSE
+This module calculates Islamic prayer times, Hijri date (Umm al-Qura), Ramadan countdown,
+Jumah Mubarak message, tomorrow’s prayer times, and optional custom dates. It supports
+high latitude adjustments, automatic DST handling, custom color gradients.
+
+-----------------------------------------------------------------------
+PARAMETERS (FROM SIMPL+)
+-----------------------------------------------------------------------
+
+Latitude
+• Decimal latitude as a string (no quotes)
+• Example: 40.7128
+
+Longitude
+• Decimal longitude as a string (no quotes)
+• Example: -74.0060
+
+TimezoneOffset
+• Integer offset from UTC (standard time)
+• Example: -5 for EST
+• DST adjustments are applied depending on DST_Mode and DST_Region
+
+DST_Mode (Analog Input)
+0 = Disabled
+    DST is ignored. TimezoneOffset is used exactly as provided.
+1 = Auto
+    Module automatically applies DST based on DST_Region.
+2 = Force On
+    DST is always applied (TimezoneOffset + 1 hour).
+3 = Force Off
+    DST is never applied.
+
+DST_Region 
+Selects the DST ruleset used when DST_Mode = Auto.
+0 = North America (Canada / USA)
+1 = Europe (EU / UK legacy rules)
+2 = Middle East (Gulf regions with partial DST history)
+3 = Custom (future expansion)
+
+Notes:
+• When DST_Mode = Auto, the module checks the current date against the selected region’s DST rules.
+• When DST_Mode = Force On or Force Off, DST_Region is ignored.
+
+Method
+• Integer selecting prayer calculation method:
+0 = Muslim World League
+1 = ISNA
+2 = Egyptian General Authority
+3 = Umm al?Qura (Saudi Arabia)
+4 = University of Islamic Sciences Karachi
+
+Asr_Method
+• 1 = Shafi’i
+• 2 = Hanafi
+
+
+INPUTS
+
+High_Latitude (Analog Input)
+Selects the high?latitude adjustment rule for Fajr and Isha.
+0 = None
+1 = Middle of the Night
+2 = One?Seventh of the Night
+3 = Angle-Based (Angle/60)
+
+Notes:
+• Only affects Fajr and Isha.
+• Only applies when twilight angles cannot be reached.
+• Umm al-Qura does not use high?latitude adjustments.
+
+Compute_Custom_Date (Digital Input)
+• Pulse to calculate prayer times for a custom date.
+
+
+
+-----------------------------------------------------------------------
+OUTPUTS
+-----------------------------------------------------------------------
+
+TODAY’S PRAYER TIMES (Serial)
+Fajr
+Sunrise
+Dhuhr
+Asr
+Maghrib
+Isha
+• All formatted as HH:MM
+
+TOMORROW’S PRAYER TIMES (Serial)
+Tomorrow_Fajr
+Tomorrow_Sunrise
+Tomorrow_Dhuhr
+Tomorrow_Asr
+Tomorrow_Maghrib
+Tomorrow_Isha
+
+CURRENT PRAYER LOGIC
+CurrentPrayer
+• Example: "Asr", "Maghrib", "Isha", "Tahajjud"
+
+NextPrayerCountdown
+• Example: "Fajr in 08:44:42"
+
+HIJRI DATE (UMM AL-QURA)
+Hijri_Date
+Hijri_Month
+Hijri_Day
+Hijri_Year
+• Example: "28 Rajab 1447"
+
+RAMADAN Info
+
+Ramadan_Info
+• "X days until Ramadan"
+• "Ramadan Day X"
+
+
+JUMAH MUBARAK
+
+Jumah_Mubarak
+• Shows "Jumah Mubarak" every Friday before Maghrib
+• Blank on other days
+
+
+Processor_ID
+• Processor ID as a string (send this to jameelm@gmail.com for full license)
+
+-----------------------------------------------------------------------
+CUSTOM PRAYER COLORS
+-----------------------------------------------------------------------
+
+
+OVERVIEW
+The PrayerTimes module supports custom color gradients for each prayer.
+Each prayer uses two RGB colors:
+  - Start Color: used at the beginning of the prayer window
+  - End Color: used at the end of the prayer window
+
+The module automatically interpolates between these two colors to produce
+a smooth gradient effect throughout the prayer window.
+
+By default, the module uses built-in colors. These defaults may be
+overridden by creating a colors.ini file on the processor.
+
+-----------------------------------------------------------------------
+
+COLOR FILE LOCATION
+The module looks for the following file at startup:
+
+    /USER/colors.ini
+
+If the file exists, the module loads the custom colors and overrides the
+default palette. If the file does not exist, the module uses the built-in
+colors.
+
+-----------------------------------------------------------------------
+
+FILE FORMAT
+The file uses a simple INI-style format. Each prayer has its own section.
+
+Example:
+
+    [Fajr]
+    Start=0,180,255
+    End=0,60,120
+
+    [Dhuhr]
+    Start=255,220,0
+    End=255,140,0
+
+    [Asr]
+    Start=255,165,0
+    End=180,65,0
+
+    [Maghrib]
+    Start=255,80,60
+    End=120,20,20
+
+    [Isha]
+    Start=140,90,255
+    End=60,30,120
+
+-----------------------------------------------------------------------
+
+RGB VALUE FORMAT
+Each color is defined using three comma-separated values:
+
+    R,G,B
+
+Where:
+  - R = Red   (0–255)
+  - G = Green (0–255)
+  - B = Blue  (0–255)
+
+Spaces are optional. Example:
+
+    Start=255,140,0
+
+-----------------------------------------------------------------------
+
+HOW COLORS ARE APPLIED
+1. The module loads default colors during initialization.
+2. If colors.ini exists, the module overrides the defaults with values
+   found in the file.
+3. During runtime, the module calculates a gradient between the Start and
+   End colors based on the current prayer window.
+4. The resulting RGB values are output to SIMPL Windows as 16-bit analog
+   values (0–65535).
+
+-----------------------------------------------------------------------
+
+ERROR HANDLING
+- If the file is missing, default colors are used.
+- If a section or key is missing, defaults for that prayer are used.
+- If an RGB value is invalid, that entry is ignored and defaults remain.
+- Errors are printed to the console for debugging.
+
+-----------------------------------------------------------------------
+
+NOTES
+- The colors.ini file is optional.
+- Only values present in the file are overridden.
+- The format is intentionally simple for easy editing.
+
+
+LICENSING
+
+Module will operate in DEMO mode (No time limit). You will get the prayer times for today except for sunrise. If you want to unlock full functionality please email jameelm@gmail.com and send your processor ID and we will generate a license key.
+
+#HELP_END
+
+#SYMBOL_NAME "Prayer Times v1.0"
+
+
+
+DIGITAL_INPUT Compute_Custom_Date, _SKIP_;
+
+ANALOG_INPUT Custom_Year;
+ANALOG_INPUT Custom_Month;
+ANALOG_INPUT Custom_Day, _SKIP_;
+
+ANALOG_INPUT DST_StartMonth;
+ANALOG_INPUT DST_StartDay;
+ANALOG_INPUT DST_EndMonth;
+ANALOG_INPUT DST_EndDay,_SKIP_;
+
+
+ANALOG_INPUT Hijri_Adjustment, High_Latitude,_SKIP_;
+
+
+/*******************************************************************************************
+  Parameters
+*******************************************************************************************/
+INTEGER_PARAMETER 
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+	_SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+	_SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+	_SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+    _SKIP_, _SKIP_, _SKIP_, _SKIP_, _SKIP_,
+
+
+
+    Timezone,
+	Time_Format,
+	DST_Mode,
+	DST_Region,
+    Method,
+    Asr_Method;
+	
+STRING_PARAMETER Latitude[20];
+STRING_PARAMETER Longitude[20];
+STRING_PARAMETER License_Key[50];
+
+
+/*******************************************************************************************
+  Parameter Properties
+*******************************************************************************************/
+#BEGIN_PARAMETER_PROPERTIES Timezone
+    propValidUnits = unitDecimal;
+    propList =
+        { 65531d , "EST (UTC-5)" },
+        { 65530d , "CST (UTC-6)" },
+        { 65529d , "MST (UTC-7)" },
+        { 65528d , "PST (UTC-8)" },
+        { 0d     , "UTC (0)"     },
+        { 1d     , "UTC+1"       },
+        { 2d     , "UTC+2"       },
+        { 3d     , "UTC+3"       },
+        { 4d     , "UTC+4"       },
+        { 5d     , "UTC+5"       },
+        { 6d     , "UTC+6"       },
+        { 7d     , "UTC+7"       },
+        { 8d     , "UTC+8"       }
+    ;
+    propShortDescription = "Select Timezone";
+#END_PARAMETER_PROPERTIES
+
+#BEGIN_PARAMETER_PROPERTIES Method
+    propValidUnits = unitDecimal;
+    propList =
+        
+        { 0d , "MWL (Muslim World League)" },
+		{ 1d , "ISNA (North America)" },
+        { 2d , "Egypt" },
+		{ 3d , "Umm al-Qura (Makkah)" },
+		{ 4d , "Karachi" }
+		
+    ;
+    propShortDescription = "Select Calculation Method";
+#END_PARAMETER_PROPERTIES
+
+#BEGIN_PARAMETER_PROPERTIES Asr_Method
+    propValidUnits = unitDecimal;
+    propList =
+        { 1d , "Shafi'i (Shadow = 1)" },
+        { 2d , "Hanafi (Shadow = 2)" }
+    ;
+    propShortDescription = "Select Asr Method";
+#END_PARAMETER_PROPERTIES
+
+
+#BEGIN_PARAMETER_PROPERTIES DST_Mode
+    propValidUnits = unitDecimal;
+    propList =
+        { 0d , "Off" },
+		{ 1d , "On" },
+        { 2d , "Automatic_Set_Region" }
+    ;
+    propShortDescription = "Select DST Mode";
+#END_PARAMETER_PROPERTIES
+
+
+
+#BEGIN_PARAMETER_PROPERTIES DST_Region
+    propValidUnits = unitDecimal;
+    propList =
+        { 0d , "North America" },
+		{ 1d , "Europe" },
+        { 2d , "Australia" },
+		{ 3d , "Custom" }
+    ;
+    propShortDescription = "Select DST Region";
+#END_PARAMETER_PROPERTIES
+
+#BEGIN_PARAMETER_PROPERTIES Time_Format
+    propValidUnits = unitDecimal;
+    propList =
+        { 0d , "24 Hour" },
+		{ 1d , "12 Hour" }
+    ;
+    propShortDescription = "Set Time Format";
+#END_PARAMETER_PROPERTIES
+
+
+#BEGIN_PARAMETER_PROPERTIES License_Key
+    propValidUnits = unitString;
+    propDefaultValue = "DEMO";
+    propShortDescription = "License Key";
+#END_PARAMETER_PROPERTIES
+
+
+
+
+
+/*******************************************************************************************
+  Outputs
+*******************************************************************************************/
+STRING_OUTPUT Fajr;
+STRING_OUTPUT Sunrise;
+STRING_OUTPUT Dhuhr;
+STRING_OUTPUT Asr;
+STRING_OUTPUT Maghrib;
+STRING_OUTPUT Isha;
+
+STRING_OUTPUT _SKIP_, Current_Prayer;
+
+ANALOG_OUTPUT Current_Prayer_RED;
+ANALOG_OUTPUT Current_Prayer_BLUE;
+ANALOG_OUTPUT Current_Prayer_GREEN;
+ANALOG_OUTPUT Next_Prayer;
+
+STRING_OUTPUT _SKIP_, Next_Prayer_Countdown;
+
+STRING_OUTPUT _SKIP_, Jumah_Mubarak;
+
+
+
+STRING_OUTPUT _SKIP_, Hijri_Date;
+STRING_OUTPUT Hijri_Month;
+STRING_OUTPUT Hijri_Day;
+STRING_OUTPUT Hijri_Year;
+
+STRING_OUTPUT Ramadan_Info;
+
+
+
+STRING_OUTPUT _SKIP_, Tomorrow_Fajr;
+STRING_OUTPUT Tomorrow_Sunrise;
+STRING_OUTPUT Tomorrow_Dhuhr;
+STRING_OUTPUT Tomorrow_Asr;
+STRING_OUTPUT Tomorrow_Maghrib;
+STRING_OUTPUT Tomorrow_Isha;
+
+
+STRING_OUTPUT _SKIP_, Calc_Fajr;
+STRING_OUTPUT Calc_Sunrise;
+STRING_OUTPUT Calc_Dhuhr;
+STRING_OUTPUT Calc_Asr;
+STRING_OUTPUT Calc_Maghrib;
+STRING_OUTPUT Calc_Isha;
+
+STRING_OUTPUT Processor_ID,_SKIP_;
+STRING_OUTPUT License_Status;
+
+
+
+/*******************************************************************************************
+  SIMPL# Object
+*******************************************************************************************/
+PrayerTimes PT;
+UmmAlQuraService US;
+
+
+/*******************************************************************************************
+  Helper
+*******************************************************************************************/
+Function UpdateAll()
+{
+    // Today
+    Fajr     = PT.Fajr;
+    Sunrise  = PT.SunriseSimpl;
+    Dhuhr    = PT.Dhuhr;
+    Asr      = PT.Asr;
+    Maghrib  = PT.Maghrib;
+    Isha     = PT.Isha;
+
+    // Hijri
+    Hijri_Date = PT.HijriDateStringSimpl;
+    Hijri_Month  = PT.HijriMonthNameSimpl;
+    Hijri_Day  = PT.HijriDayStringSimpl;
+    Hijri_Year = PT.HijriYearStringSimpl;
+
+    // Tomorrow
+    Tomorrow_Fajr     = PT.TomorrowFajrSimpl;
+    Tomorrow_Sunrise  = PT.TomorrowSunriseSimpl;
+    Tomorrow_Dhuhr    = PT.TomorrowDhuhrSimpl;
+    Tomorrow_Asr      = PT.TomorrowAsrSimpl;
+    Tomorrow_Maghrib  = PT.TomorrowMaghribSimpl;
+    Tomorrow_Isha     = PT.TomorrowIshaSimpl;
+    Ramadan_Info = PT.RamadanStatusSimpl;
+    }
+
+
+
+
+Function UpdateParams()
+{	
+
+    PT.TimezoneOffset = Timezone;
+    PT.MethodParam    = Method;
+    PT.AsrMethodParam = Asr_Method;
+    PT.Latitude       = Latitude;
+    PT.Longitude      = Longitude;
+	PT.DSTMode		  = DST_Mode;
+	PT.DSTRegion	  = DST_Region;
+	PT.CustomStartMonth = DST_StartMonth;
+	PT.CustomStartDay = DST_StartDay;
+    PT.CustomEndMonth = DST_EndMonth;
+	PT.CustomEndDay = DST_EndDay;
+    PT.TimeFormat = Time_Format ;
+	PT.GetProcessor ();
+	Processor_ID = PT.ProcessorIdSimpl;
+	PT.SetLicenseKey(License_Key);
+    License_Status = PT.LicenseStatusSimpl;
+	
+	
+    PT.Calculate();   // FIRST compute today/tomorrow
+	
+    UpdateAll();   // read values AFTER SIMPL# writes them
+  	
+
+ }
+
+Function NextPrayer()
+{
+	LONG_INTEGER Recalc; 
+
+   // Lightweight next-prayer update
+    PT.UpdatePrayerTimes();
+    
+    
+    Current_Prayer          = PT.CurrentPrayerSimpl;
+    Next_Prayer_Countdown = PT.NextPrayerStringSimpl;
+    Next_Prayer       = PT.NextPrayerScaledSimpl;
+	Current_Prayer_RED	= PT.RedValueSimpl;
+	Current_Prayer_BLUE = PT.BlueValueSimpl;
+	Current_Prayer_GREEN = PT.GreenValueSimpl;
+
+	Jumah_Mubarak = PT.JumahMubarakSimpl;
+
+
+ }
+
+FUNCTION ScheduleMidnightRecalc()
+{
+    INTEGER h;
+    INTEGER m;
+    INTEGER s;
+
+    LONG_INTEGER secondsNow;
+    LONG_INTEGER secondsMidnight;
+    LONG_INTEGER msToMidnight;
+
+    LONG_INTEGER hoursLeft;
+    LONG_INTEGER minsLeft;
+    LONG_INTEGER secsLeft;
+
+    h = GetHourNum();
+    m = GetMinutesNum();
+    s = GetSecondsNum();
+
+    secondsNow = (h * 3600) + (m * 60) + s;
+    secondsMidnight = 86400; // 24*60*60 seconds
+
+    msToMidnight = (secondsMidnight - secondsNow) * 1000;
+
+    IF (msToMidnight < 0)
+        msToMidnight = 0;
+
+    // Convert to hours, minutes, seconds for console display
+    secsLeft = msToMidnight / 1000;
+    hoursLeft = secsLeft / 3600;
+    minsLeft = (secsLeft % 3600) / 60;
+    secsLeft = secsLeft % 60;
+
+    // Polished console output with current time
+    PRINT("[PrayerModule] %02d:%02d:%02d | MidnightRecalc scheduled in %ldh %ldm %lds\n",
+          h, m, s, hoursLeft, minsLeft, secsLeft);
+
+    WAIT(msToMidnight)
+    {
+        PRINT("[PrayerModule] %02d:%02d:%02d | Midnight reached, recalculating prayer times\n",
+              GetHourNum(), GetMinutesNum(), GetSecondsNum());
+
+        PT.Calculate();
+
+        // Schedule the next midnight
+        ScheduleMidnightRecalc();
+    }
+}
+
+/*******************************************************************************************
+  Initialization
+*******************************************************************************************/
+
+
+
+ PUSH Compute_Custom_Date
+{
+    PT.ComputeForDateSimpl(Custom_Year, Custom_Month, Custom_Day);
+
+    WAIT (20)
+    {
+        Calc_Fajr = PT.CustomFajrSimpl;
+        Calc_Sunrise = PT.CustomSunriseSimpl;
+        Calc_Dhuhr = PT.CustomDhuhrSimpl;
+        Calc_Asr = PT.CustomAsrSimpl;
+        Calc_Maghrib = PT.CustomMaghribSimpl;
+        Calc_Isha = PT.CustomIshaSimpl;
+    }
+	
+}
+
+
+
+CHANGE Hijri_Adjustment
+{  
+
+ 	PT.SetHijriAdjustment(Hijri_Adjustment);
+	PT.CalculateHijriOnly();
+	
+	WAIT (20)
+	{
+	Hijri_Date = PT.HijriDateStringSimpl;
+    Hijri_Month  = PT.HijriMonthNameSimpl;
+    Hijri_Day  = PT.HijriDayStringSimpl;
+    Hijri_Year = PT.HijriYearStringSimpl;
+	Ramadan_Info = PT.RamadanStatusSimpl;
+    }
+
+
+}
+
+CHANGE High_Latitude
+{  
+
+ 	PT.SetHighLatitudeMode(High_Latitude);
+	PT.Calculate();	
+     UpdateAll(); 
+}
+
+
+/*******************************************************************************************
+  Auto-run and midnight recalc
+*******************************************************************************************/
+
+FUNCTION StartTimer()
+{
+    WAIT(100)
+    {
+        NextPrayer();
+        StartTimer();
+    }
+}
+
+
+FUNCTION Main()
+{
+  	
+    ScheduleMidnightRecalc();
+   	UpdateParams();
+	StartTimer();
+	    
+ }
+             
+ 
