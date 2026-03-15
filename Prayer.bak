@@ -568,7 +568,7 @@ FUNCTION ScheduleMidnightRecalc()
               GetHourNum(), GetMinutesNum(), GetSecondsNum());
 
         PT.Calculate();
-
+        UpdateAll();
         // Schedule the next midnight
         ScheduleMidnightRecalc();
     }
