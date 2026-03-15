@@ -41,7 +41,7 @@ DST_Mode (Analog Input)
 3 = Force Off
     DST is never applied.
 
-DST_Region (Analog Input)
+DST_Region 
 
 Selects the DST ruleset used when DST_Mode = Auto.
 
