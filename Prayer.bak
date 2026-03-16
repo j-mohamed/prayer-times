@@ -561,13 +561,12 @@ FUNCTION ScheduleMidnightRecalc()
     // Polished console output with current time
     PRINT("[PrayerModule] %02d:%02d:%02d | MidnightRecalc scheduled in %ldh %ldm %lds\n",
           h, m, s, hoursLeft, minsLeft, secsLeft);
-
+    
     WAIT(msToMidnight)
     {
         PRINT("[PrayerModule] %02d:%02d:%02d | Midnight reached, recalculating prayer times\n",
               GetHourNum(), GetMinutesNum(), GetSecondsNum());
-
-        PT.Calculate();
+	    PT.Calculate();
         UpdateAll();
         // Schedule the next midnight
         ScheduleMidnightRecalc();
@@ -641,8 +640,10 @@ FUNCTION StartTimer()
 
 FUNCTION Main()
 {
-  	
+  	WAIT(1000)
+	{
     ScheduleMidnightRecalc();
+	}
    	UpdateParams();
 	StartTimer();
 	    
