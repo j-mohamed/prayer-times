@@ -437,7 +437,7 @@ STRING_OUTPUT Calc_Isha;
 STRING_OUTPUT Processor_ID,_SKIP_;
 STRING_OUTPUT License_Status;
 
-
+INTEGER LastDay;
 
 /*******************************************************************************************
   SIMPL# Object
@@ -524,52 +524,29 @@ Function NextPrayer()
 	Jumah_Mubarak = PT.JumahMubarakSimpl;
 
 
- }
+}
 
-FUNCTION ScheduleMidnightRecalc()
+
+FUNCTION CheckMidnight()
 {
-    INTEGER h;
-    INTEGER m;
-    INTEGER s;
+    INTEGER currentDay;
 
-    LONG_INTEGER secondsNow;
-    LONG_INTEGER secondsMidnight;
-    LONG_INTEGER msToMidnight;
-
-    LONG_INTEGER hoursLeft;
-    LONG_INTEGER minsLeft;
-    LONG_INTEGER secsLeft;
-
-    h = GetHourNum();
-    m = GetMinutesNum();
-    s = GetSecondsNum();
-
-    secondsNow = (h * 3600) + (m * 60) + s;
-    secondsMidnight = 86400; // 24*60*60 seconds
-
-    msToMidnight = (secondsMidnight - secondsNow) * 1000;
-
-    IF (msToMidnight < 0)
-        msToMidnight = 0;
-
-    // Convert to hours, minutes, seconds for console display
-    secsLeft = msToMidnight / 1000;
-    hoursLeft = secsLeft / 3600;
-    minsLeft = (secsLeft % 3600) / 60;
-    secsLeft = secsLeft % 60;
-
-    // Polished console output with current time
-    PRINT("[PrayerModule] %02d:%02d:%02d | MidnightRecalc scheduled in %ldh %ldm %lds\n",
-          h, m, s, hoursLeft, minsLeft, secsLeft);
-    
-    WAIT(msToMidnight)
+	currentDay = GetDateNum();
+    // Detect midnight by day rollover
+    IF (currentDay != LastDay)
     {
-        PRINT("[PrayerModule] %02d:%02d:%02d | Midnight reached, recalculating prayer times\n",
-              GetHourNum(), GetMinutesNum(), GetSecondsNum());
-	    PT.Calculate();
+        LastDay = currentDay;
+
+        PRINT("[PrayerModule] Midnight detected — recalculating\n");
+
+        PT.Calculate();
         UpdateAll();
-        // Schedule the next midnight
-        ScheduleMidnightRecalc();
+    }
+
+    // Run again in 1 second
+    WAIT(100)
+    {
+        CheckMidnight();
     }
 }
 
@@ -640,10 +617,9 @@ FUNCTION StartTimer()
 
 FUNCTION Main()
 {
-  	WAIT(1000)
-	{
-    ScheduleMidnightRecalc();
-	}
+  	
+	LastDay = GetDateNum();
+	CheckMidnight();
    	UpdateParams();
 	StartTimer();
 	    
